@@ -1,0 +1,29 @@
+{
+  "name": "brand-content-tools",
+  "version": "1.0.0",
+  "description": "A set of tools for building brand content",
+  "main": "index.mjs",
+  "scripts": {
+    "dev": "snowpack dev",
+    "build": "snowpack build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react",
+    "node",
+    "brand",
+    "content",
+    "marketing"
+  ],
+  "author": "Nafeu Nasir (nafeu.nasir@gmail.com)",
+  "license": "MIT",
+  "devDependencies": {
+    "snowpack": "^3.1.2"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-konva": "^17.0.1-3",
+    "react-router-dom": "^5.2.0"
+  }
+}
