@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route,
   Link
@@ -19,11 +19,11 @@ const App = () => {
       <div>
         <Navigation />
         <Switch>
-          <Route path="/image-builder">
-            <ImageBuilder />
-          </Route>
           <Route path="/social-info">
             <SocialInfo />
+          </Route>
+          <Route path="/image-builder">
+            <ImageBuilder />
           </Route>
           <Route path="/about">
             <About />
