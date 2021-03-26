@@ -9,6 +9,9 @@ import {
 } from 'react-konva';
 import useImage from 'use-image';
 
+import { IMAGE_OPTIONS, IMAGE_OPTIONS_MAPPING } from '../../../constants.jsx'
+
+const FIRST_ITEM = 0;
 const DEFAULT_FONT_SIZE = 20;
 const MAX_FONT_SIZE = 50;
 const MIN_FONT_SIZE = 8;
@@ -25,6 +28,8 @@ const DEFAULT_LOGO_POSITION = {
   y: 0
 }
 
+const DEFAULT_STAGE_DIMENSIONS = IMAGE_OPTIONS[FIRST_ITEM]
+
 const BackgroundImage = imageProps => {
   const [image] = useImage('/assets/bg-1.jpg');
   return <Image image={image} {...imageProps} />;
@@ -40,6 +45,7 @@ const ImageBuilder = () => {
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [backgroundPosition, setBackgroundPosition] = useState(DEFAULT_BACKGROUND_POSITION);
   const [logoPosition, setLogoPosition] = useState(DEFAULT_LOGO_POSITION);
+  const [stageDimensions, setStageDimensions] = useState(DEFAULT_STAGE_DIMENSIONS);
 
   const stage = useRef();
 
@@ -61,8 +67,8 @@ const ImageBuilder = () => {
   }
 
   const handleClickDownloadImage = () => {
-    const dataURL = stage.current.toDataURL({ pixelRatio: 3 });
-    downloadURI(dataURL, 'stage.png');
+    const dataURL = stage.current.toDataURL({ pixelRatio: 1 });
+    downloadURI(dataURL, `${stageDimensions.id} - ${new Date().toDateString()}`);
   }
 
   const handleDragStartLogo = () => {
@@ -95,6 +101,12 @@ const ImageBuilder = () => {
     })
   }
 
+  const handleChangeSelectStageDimensions = event => {
+    console.log({ IMAGE_OPTIONS_MAPPING });
+
+    setStageDimensions(IMAGE_OPTIONS_MAPPING[event.target.value]);
+  }
+
   return (
     <div className="page-image-builder">
       <input value={imageText} onChange={handleChangeImageText} placeholder="Enter text"/>
@@ -105,8 +117,15 @@ const ImageBuilder = () => {
         value={fontSize}
         onChange={handleChangeFontSize}
       />
+      <select value={stageDimensions.id} onChange={handleChangeSelectStageDimensions}>
+        {
+          IMAGE_OPTIONS.map(
+            ({ id }) => <option value={id}>{id}</option>
+          )
+        }
+      </select>
       <button onClick={handleClickDownloadImage}>Download Image</button>
-      <Stage width={500} height={500} ref={stage}>
+      <Stage width={stageDimensions.width} height={stageDimensions.height} ref={stage}>
         <Layer>
           <BackgroundImage
             draggable
