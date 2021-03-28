@@ -22,19 +22,27 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import { IMAGE_OPTIONS, IMAGE_OPTIONS_MAPPING } from '../../../constants.jsx'
 
 const FIRST_ITEM = 0;
-const DEFAULT_BACKGROUND_VARIATION = 1;
-const DEFAULT_HEADSHOT_VARIATION = 1;
 const DEFAULT_HEADSHOT_SCALE = 100;
 const MAX_FONT_SIZE = 200;
 const MIN_FONT_SIZE = 50;
 const MIN_IMAGE_SCALE = 25;
 const MAX_IMAGE_SCALE = 200;
-const MIN_IMAGE_OFFSET = -100;
-const MAX_IMAGE_OFFSET = 100;
+const MIN_IMAGE_OFFSET = -200;
+const MAX_IMAGE_OFFSET = 400;
 const MIN_IMAGE_CLIP = 25;
 const MAX_IMAGE_CLIP = 400;
 const MIN_IMAGE_BORDER_RADIUS = 0;
 const MAX_IMAGE_BORDER_RADIUS = 100;
+
+const AVAILABLE_BACKGROUND_IMAGES = [
+  'dark-blue-gradient.png',
+  'peach-red-gradient.png'
+];
+
+const AVAILABLE_HEADSHOT_IMAGES = [
+  'grey-wall-smiley.png',
+  'crossed-hands-smiley.jpg'
+];
 
 const AVAILABLE_COLORS = [
   '#ffffff',
@@ -72,6 +80,8 @@ const DEFAULT_FONT = AVAILABLE_FONTS[FIRST_ITEM];
 const DEFAULT_FONT_STYLE = AVAILABLE_FONT_STYLES[FIRST_ITEM];
 const DEFAULT_FONT_DECORATION = AVAILABLE_FONT_DECORATIONS[FIRST_ITEM];
 const DEFAULT_STAGE_DIMENSIONS = IMAGE_OPTIONS[FIRST_ITEM]
+const DEFAULT_BACKGROUND_IMAGE = AVAILABLE_BACKGROUND_IMAGES[FIRST_ITEM];
+const DEFAULT_HEADSHOT_IMAGE = AVAILABLE_HEADSHOT_IMAGES[FIRST_ITEM];
 
 const INITIAL_TEXT_STATE = {
   verb: {
@@ -118,10 +128,10 @@ const INITIAL_TEXT_STATE = {
 
 const INITIAL_IMAGE_STATE = {
   background: {
-    variation: 1
+    imagePath: DEFAULT_BACKGROUND_IMAGE
   },
   headshot: {
-    variation: 1,
+    imagePath: DEFAULT_HEADSHOT_IMAGE,
     scale: 100,
     xOffset: 0,
     yOffset: 50,
@@ -148,7 +158,38 @@ const clipBox = (ctx, x, y, width, height, radius) => {
   ctx.closePath();
 };
 
-const TextStyler = ({ key, onClickColor, onClickFont, onClickFontStyle, onClickFontDecoration }) => {
+const ImageSelector = ({ onClickBackground, onClickHeadshot }) => {
+  return (
+    <InputGroup>
+      <InputGroup>
+        {
+          AVAILABLE_BACKGROUND_IMAGES.map(imagePath => {
+            return <div
+              className="image-selector-background-item"
+              key={imagePath}
+              onClick={() => onClickBackground(imagePath)}
+            >
+              {imagePath}
+            </div>
+          })
+        }
+        {
+          AVAILABLE_HEADSHOT_IMAGES.map(imagePath => {
+            return <div
+              className="image-selector-headshot-item"
+              key={imagePath}
+              onClick={() => onClickHeadshot(imagePath)}
+            >
+              {imagePath}
+            </div>
+          })
+        }
+      </InputGroup>
+    </InputGroup>
+  )
+}
+
+const TextStyler = ({ onClickColor, onClickFont, onClickFontStyle, onClickFontDecoration }) => {
   return (
     <InputGroup>
       <InputGroup>
@@ -212,13 +253,13 @@ const TextStyler = ({ key, onClickColor, onClickFont, onClickFontStyle, onClickF
   );
 }
 
-const BackgroundImage = ({ variation = 1 }) => {
-  const [image] = useImage(`/assets/bg-${variation}.png`);
+const BackgroundImage = ({ imagePath }) => {
+  const [image] = useImage(`/assets/${imagePath}`);
   return <Image image={image} />;
 }
 
-const HeadshotImage = ({ variation = 1, x, y, scale, xOffset, yOffset, clip }) => {
-  const [image] = useImage(`/assets/headshot-${variation}.png`);
+const HeadshotImage = ({ imagePath, scale, xOffset, yOffset, clip }) => {
+  const [image] = useImage(`/assets/${imagePath}`);
   if (image) {
     return <Group
       clipFunc={ctx => {
@@ -231,8 +272,6 @@ const HeadshotImage = ({ variation = 1, x, y, scale, xOffset, yOffset, clip }) =
           false
         );
       }}
-      x={x}
-      y={y}
       scaleX={scale / 100}
       scaleY={scale / 100}
       draggable
@@ -302,8 +341,6 @@ const ImageBuilder = () => {
   };
 
   const handleChangeText = ({ key, property, value }) => {
-    console.log({ key, property, value });
-
     setText({
       ...text,
       [key]: {
@@ -371,6 +408,21 @@ const ImageBuilder = () => {
                     )
                   }
                 </Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Select Background & Headshot</Form.Label>
+                <ImageSelector
+                  onClickBackground={imagePath => handleChangeImage({
+                    key: 'background',
+                    property: 'imagePath',
+                    value: imagePath
+                  })}
+                  onClickHeadshot={imagePath => handleChangeImage({
+                    key: 'headshot',
+                    property: 'imagePath',
+                    value: imagePath
+                  })}
+                />
               </Form.Group>
               <Row>
                 <Col>
@@ -634,7 +686,7 @@ const ImageBuilder = () => {
           <Col xs={12} sm={12} md={9} lg={9}>
             <Stage className="mt-4 mb-4 konva-container" width={stageDimensions.width} height={stageDimensions.height} ref={stage}>
               <Layer>
-                <BackgroundImage variation={image.background.variation} />
+                <BackgroundImage imagePath={image.background.imagePath} />
                 <LogoImage stageWidth={stageDimensions.width} />
                 <ActionImage
                   scale={image.action.scale}
@@ -642,7 +694,7 @@ const ImageBuilder = () => {
                   dataUrl={image.action.dataUrl}
                 />
                 <HeadshotImage
-                  variation={image.headshot.variation}
+                  imagePath={image.headshot.imagePath}
                   scale={image.headshot.scale}
                   xOffset={image.headshot.xOffset}
                   yOffset={image.headshot.yOffset}

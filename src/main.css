@@ -59,3 +59,33 @@
 .text-styler-font-decoration-item:active {
   opacity: 0.25;
 }
+
+.image-selector-background-item {
+  font-size: 0.6em;
+  padding: 2.5px;
+  border-bottom: 1px solid #7f8c8d;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-right: 2.5px;
+  color: #2980b9;
+  cursor: pointer;
+}
+
+.image-selector-background-item:active {
+  opacity: 0.25;
+}
+
+.image-selector-headshot-item {
+  font-size: 0.6em;
+  padding: 2.5px;
+  border-bottom: 1px solid #7f8c8d;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-right: 2.5px;
+  color: #16a085;
+  cursor: pointer;
+}
+
+.image-selector-headshot-item:active {
+  opacity: 0.25;
+}
