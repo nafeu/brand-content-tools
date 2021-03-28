@@ -27,8 +27,14 @@ const DEFAULT_HEADSHOT_VARIATION = 1;
 const DEFAULT_HEADSHOT_SCALE = 100;
 const MAX_FONT_SIZE = 200;
 const MIN_FONT_SIZE = 50;
-const MIN_HEADSHOT_SCALE = 25;
-const MAX_HEADSHOT_SCALE = 200;
+const MIN_IMAGE_SCALE = 25;
+const MAX_IMAGE_SCALE = 200;
+const MIN_IMAGE_OFFSET = -100;
+const MAX_IMAGE_OFFSET = 100;
+const MIN_IMAGE_CLIP = 25;
+const MAX_IMAGE_CLIP = 400;
+const MIN_IMAGE_BORDER_RADIUS = 0;
+const MAX_IMAGE_BORDER_RADIUS = 100;
 
 const DEFAULT_STAGE_DIMENSIONS = IMAGE_OPTIONS[FIRST_ITEM]
 
@@ -65,25 +71,50 @@ const INITIAL_IMAGE_STATE = {
   },
   headshot: {
     variation: 1,
-    scale: 100
+    scale: 100,
+    xOffset: 0,
+    yOffset: 50,
+    clip: 200
   },
   action: {
     scale: 100,
+    borderRadius: 25,
     dataUrl: null
   }
 }
+
+const clipBox = (ctx, x, y, width, height, radius) => {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+};
 
 const BackgroundImage = ({ variation = 1 }) => {
   const [image] = useImage(`/assets/bg-${variation}.png`);
   return <Image image={image} />;
 }
 
-const HeadshotImage = ({ variation = 1, x, y, scale }) => {
+const HeadshotImage = ({ variation = 1, x, y, scale, xOffset, yOffset, clip }) => {
   const [image] = useImage(`/assets/headshot-${variation}.png`);
   if (image) {
     return <Group
       clipFunc={ctx => {
-        ctx.arc(image.width / 2, (image.height / 2) - 50, 200, 0, Math.PI * 2, false);
+        ctx.arc(
+          (image.width / 2) - xOffset,
+          (image.height / 2) - yOffset,
+          clip,
+          0,
+          Math.PI * 2,
+          false
+        );
       }}
       x={x}
       y={y}
@@ -115,11 +146,25 @@ const LogoImage = ({ stageWidth }) => {
   />;
 }
 
-const ActionImage = ({ dataUrl }) => {
+const ActionImage = ({ dataUrl, x, y, scale, borderRadius }) => {
   if (dataUrl) {
     const [image] = useImage(dataUrl);
 
-    return <Image image={image} />;
+
+    if (image) {
+      return <Group
+        clipFunc={ctx => {
+          clipBox(ctx, 0, 0, image.width, image.height, borderRadius);
+        }}
+        x={x}
+        y={y}
+        scaleX={scale / 100}
+        scaleY={scale / 100}
+        draggable
+      >
+        <Image image={image} />
+      </Group>
+    }
   }
 
   return <Text text={'Please paste action image'} />
@@ -205,7 +250,7 @@ const ImageBuilder = () => {
                 >
                   {
                     IMAGE_OPTIONS.map(
-                      ({ id }) => <option value={id}>{id}</option>
+                      ({ id }) => <option key={id} value={id}>{id}</option>
                     )
                   }
                 </Form.Control>
@@ -221,11 +266,11 @@ const ImageBuilder = () => {
                       onChange={event => handleChangeText({ key: 'verb', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
+                      tooltip="off"
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
                       value={text.verb.size}
                       onChange={event => handleChangeText({ key: 'verb', property: 'size', value: Number(event.target.value)})}
-                      tooltipPlacement='bottom'
                     />
                   </Form.Group>
                 </Col>
@@ -239,11 +284,11 @@ const ImageBuilder = () => {
                       onChange={event => handleChangeText({ key: 'subject', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
+                      tooltip="off"
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
                       value={text.subject.size}
                       onChange={event => handleChangeText({ key: 'subject', property: 'size', value: Number(event.target.value)})}
-                      tooltipPlacement='bottom'
                     />
                   </Form.Group>
                 </Col>
@@ -259,11 +304,11 @@ const ImageBuilder = () => {
                       onChange={event => handleChangeText({ key: 'preposition', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
+                      tooltip="off"
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
                       value={text.preposition.size}
                       onChange={event => handleChangeText({ key: 'preposition', property: 'size', value: Number(event.target.value)})}
-                      tooltipPlacement='bottom'
                     />
                   </Form.Group>
                 </Col>
@@ -277,30 +322,105 @@ const ImageBuilder = () => {
                       onChange={event => handleChangeText({ key: 'object', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
+                      tooltip="off"
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
                       value={text.object.size}
                       onChange={event => handleChangeText({ key: 'object', property: 'size', value: Number(event.target.value)})}
-                      tooltipPlacement='bottom'
                     />
                   </Form.Group>
                 </Col>
               </Row>
+
               <Form.Group>
                 <Form.Label>Adjust Headshot</Form.Label>
-                <RangeSlider
-                  min={MIN_HEADSHOT_SCALE}
-                  max={MAX_HEADSHOT_SCALE}
-                  value={image.headshot.scale}
-                  onChange={event => handleChangeImage({ key: 'headshot', property: 'scale', value: Number(event.target.value)})}
-                  tooltipPlacement='bottom'
-                />
+                <Form.Group as={Row}>
+                  <Form.Label column sm="4" className="text-muted">
+                    Scale
+                  </Form.Label>
+                  <Col sm="8">
+                    <RangeSlider
+                      tooltip="off"
+                      min={MIN_IMAGE_SCALE}
+                      max={MAX_IMAGE_SCALE}
+                      value={image.headshot.scale}
+                      onChange={event => handleChangeImage({ key: 'headshot', property: 'scale', value: Number(event.target.value)})}
+                    />
+                  </Col>
+                  <Form.Label column sm="4" className="text-muted">
+                    xOffset
+                  </Form.Label>
+                  <Col sm="8">
+                    <RangeSlider
+                      tooltip="off"
+                      min={MIN_IMAGE_OFFSET}
+                      max={MAX_IMAGE_OFFSET}
+                      value={image.headshot.xOffset}
+                      onChange={event => handleChangeImage({ key: 'headshot', property: 'xOffset', value: Number(event.target.value)})}
+                    />
+                  </Col>
+                  <Form.Label column sm="4" className="text-muted">
+                    yOffset
+                  </Form.Label>
+                  <Col sm="8">
+                    <RangeSlider
+                      tooltip="off"
+                      min={MIN_IMAGE_OFFSET}
+                      max={MAX_IMAGE_OFFSET}
+                      value={image.headshot.yOffset}
+                      onChange={event => handleChangeImage({ key: 'headshot', property: 'yOffset', value: Number(event.target.value)})}
+                    />
+                  </Col>
+                  <Form.Label column sm="4" className="text-muted">
+                    clip
+                  </Form.Label>
+                  <Col sm="8">
+                    <RangeSlider
+                      tooltip="off"
+                      min={MIN_IMAGE_CLIP}
+                      max={MAX_IMAGE_CLIP}
+                      value={image.headshot.clip}
+                      onChange={event => handleChangeImage({ key: 'headshot', property: 'clip', value: Number(event.target.value)})}
+                    />
+                  </Col>
+                </Form.Group>
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label>Adjust Action Image</Form.Label>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="4" className="text-muted">
+                    Scale
+                  </Form.Label>
+                  <Col sm="8">
+                    <RangeSlider
+                      tooltip="off"
+                      min={MIN_IMAGE_SCALE}
+                      max={MAX_IMAGE_SCALE}
+                      value={image.action.scale}
+                      onChange={event => handleChangeImage({ key: 'action', property: 'scale', value: Number(event.target.value)})}
+                    />
+                  </Col>
+                  <Form.Label column sm="4" className="text-muted">
+                    borderRadius
+                  </Form.Label>
+                  <Col sm="8">
+                    <RangeSlider
+                      tooltip="off"
+                      min={MIN_IMAGE_BORDER_RADIUS}
+                      max={MAX_IMAGE_BORDER_RADIUS}
+                      value={image.action.borderRadius}
+                      onChange={event => handleChangeImage({ key: 'action', property: 'borderRadius', value: Number(event.target.value)})}
+                    />
+                  </Col>
+                </Form.Group>
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label>Adjust Action Image</Form.Label>
+                <Form.Control as="input" placeholder="Paste Action Image Here" onPaste={handlePasteImage}/>
               </Form.Group>
             </Form>
-
-            <InputGroup className="mb-3">
-              <FormControl as="input" placeholder="Paste Action Image Here" onPaste={handlePasteImage}/>
-            </InputGroup>
 
             <Button onClick={handleClickDownloadImage} variant="secondary" size="lg" block>
               Download Image
@@ -310,9 +430,12 @@ const ImageBuilder = () => {
             <Stage className="mt-4 mb-4 konva-container" width={stageDimensions.width} height={stageDimensions.height} ref={stage}>
               <Layer>
                 <BackgroundImage variation={image.background.variation} />
-                <HeadshotImage variation={image.headshot.variation} scale={image.headshot.scale} />
                 <LogoImage stageWidth={stageDimensions.width} />
-                <ActionImage dataUrl={image.action.dataUrl} />
+                <ActionImage
+                  scale={image.action.scale}
+                  borderRadius={image.action.borderRadius}
+                  dataUrl={image.action.dataUrl}
+                />
                 <Text
                   x={text.verb.x}
                   y={text.verb.y}
@@ -348,6 +471,13 @@ const ImageBuilder = () => {
                   fontFamily={'Fira Code'}
                   fill={'white'}
                   draggable
+                />
+                <HeadshotImage
+                  variation={image.headshot.variation}
+                  scale={image.headshot.scale}
+                  xOffset={image.headshot.xOffset}
+                  yOffset={image.headshot.yOffset}
+                  clip={image.headshot.clip}
                 />
               </Layer>
             </Stage>
