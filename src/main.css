@@ -2,3 +2,60 @@
   display: flex;
   justify-content: center;
 }
+
+.text-styler-color-item {
+  width: 10px;
+  height: 15px;
+  margin-top: 5px;
+  cursor: pointer;
+  border-bottom: 1px solid #7f8c8d;
+}
+
+.text-styler-color-item:active {
+  opacity: 0.25;
+}
+
+.text-styler-font-item {
+  font-size: 0.6em;
+  padding: 2.5px;
+  border-bottom: 1px solid #7f8c8d;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-right: 2.5px;
+  color: #2c3e50;
+  cursor: pointer;
+}
+
+.text-styler-font-item:active {
+  opacity: 0.25;
+}
+
+.text-styler-font-style-item {
+  font-size: 0.6em;
+  padding: 2.5px;
+  border-bottom: 1px solid #7f8c8d;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-right: 2.5px;
+  color: #8e44ad;
+  cursor: pointer;
+}
+
+.text-styler-font-style-item:active {
+  opacity: 0.25;
+}
+
+.text-styler-font-decoration-item {
+  font-size: 0.6em;
+  padding: 2.5px;
+  border-bottom: 1px solid #7f8c8d;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-right: 2.5px;
+  color: #c0392b;
+  cursor: pointer;
+}
+
+.text-styler-font-decoration-item:active {
+  opacity: 0.25;
+}
