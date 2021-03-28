@@ -5,7 +5,8 @@ import {
   Rect,
   Circle,
   Text,
-  Image
+  Image,
+  Group
 } from 'react-konva';
 import useImage from 'use-image';
 
@@ -16,36 +17,46 @@ const DEFAULT_FONT_SIZE = 20;
 const MAX_FONT_SIZE = 50;
 const MIN_FONT_SIZE = 8;
 
-const DEFAULT_BACKGROUND_POSITION = {
-  isDragging: false,
-  x: 0,
-  y: 0
-}
-
-const DEFAULT_LOGO_POSITION = {
-  isDragging: false,
-  x: 0,
-  y: 0
-}
-
 const DEFAULT_STAGE_DIMENSIONS = IMAGE_OPTIONS[FIRST_ITEM]
 
-const BackgroundImage = imageProps => {
-  const [image] = useImage('/assets/bg-1.jpg');
-  return <Image image={image} {...imageProps} />;
+const BackgroundImage = ({ variation = 1}) => {
+  const [image] = useImage(`/assets/bg-${variation}.png`);
+  return <Image image={image} />;
 }
 
-const LogoImage = imageProps => {
+const LogoImage = ({ stageWidth }) => {
   const [image] = useImage('/assets/logo-2.png');
-  return <Image image={image} {...imageProps} />;
+
+  const padding = 10;
+  const scaleX = 0.25;
+  const scaleY = 0.25;
+  const x = image ? stageWidth - (image.width * scaleX) - padding : 0;
+  const y = padding;
+
+  return <Image
+    scaleX={scaleX}
+    scaleY={scaleY}
+    x={x}
+    y={y}
+    image={image}
+  />;
+}
+
+const ActionImage = ({ dataUrl }) => {
+  if (dataUrl) {
+    const [image] = useImage(dataUrl);
+
+    return <Image image={image} />;
+  }
+
+  return <Text text={'Please paste action image'} />
 }
 
 const ImageBuilder = () => {
   const [imageText, setImageText] = useState('');
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
-  const [backgroundPosition, setBackgroundPosition] = useState(DEFAULT_BACKGROUND_POSITION);
-  const [logoPosition, setLogoPosition] = useState(DEFAULT_LOGO_POSITION);
   const [stageDimensions, setStageDimensions] = useState(DEFAULT_STAGE_DIMENSIONS);
+  const [actionImageDataUrl, setActionImageDataUrl] = useState(null);
 
   const stage = useRef();
 
@@ -71,51 +82,36 @@ const ImageBuilder = () => {
     downloadURI(dataURL, `${stageDimensions.id} - ${new Date().toDateString()}`);
   }
 
-  const handleDragStartLogo = () => {
-    setLogoPosition({
-      ...logoPosition,
-      isDragging: true
-    })
-  }
-
-  const handleDragEndLogo = event => {
-    setLogoPosition({
-      isDragging: false,
-      x: event.target.x(),
-      y: event.target.y()
-    })
-  }
-
-  const handleDragStartBackground = () => {
-    setBackgroundPosition({
-      ...logoPosition,
-      isDragging: true
-    })
-  }
-
-  const handleDragEndBackground = event => {
-    setBackgroundPosition({
-      isDragging: false,
-      x: event.target.x(),
-      y: event.target.y()
-    })
-  }
-
   const handleChangeSelectStageDimensions = event => {
-    console.log({ IMAGE_OPTIONS_MAPPING });
-
     setStageDimensions(IMAGE_OPTIONS_MAPPING[event.target.value]);
+  }
+
+  const handlePasteImage = pasteEvent => {
+    const items = pasteEvent.clipboardData.items;
+
+    const blob = items[0].getAsFile();
+    const reader = new FileReader();
+
+    reader.onload = loadEvent => {
+      setActionImageDataUrl(loadEvent.target.result)
+    };
+
+    reader.readAsDataURL(blob);
   }
 
   return (
     <div className="page-image-builder">
-      <input value={imageText} onChange={handleChangeImageText} placeholder="Enter text"/>
+      <textarea value={imageText} onChange={handleChangeImageText} placeholder="Enter text"/>
       <input
         type="range"
         min={MIN_FONT_SIZE}
         max={MAX_FONT_SIZE}
         value={fontSize}
         onChange={handleChangeFontSize}
+      />
+      <input
+        placeholder="Paste image here"
+        onPaste={handlePasteImage}
       />
       <select value={stageDimensions.id} onChange={handleChangeSelectStageDimensions}>
         {
@@ -127,20 +123,9 @@ const ImageBuilder = () => {
       <button onClick={handleClickDownloadImage}>Download Image</button>
       <Stage width={stageDimensions.width} height={stageDimensions.height} ref={stage}>
         <Layer>
-          <BackgroundImage
-            draggable
-            x={backgroundPosition.x}
-            y={backgroundPosition.y}
-            onDragStart={handleDragStartBackground}
-            onDragEnd={handleDragEndBackground}
-          />
-          <LogoImage
-            draggable
-            x={logoPosition.x}
-            y={logoPosition.y}
-            onDragStart={handleDragStartLogo}
-            onDragEnd={handleDragEndLogo}
-          />
+          <BackgroundImage />
+          <LogoImage stageWidth={stageDimensions.width} />
+          <ActionImage dataUrl={actionImageDataUrl} />
           <Text
             x={10}
             y={10}
