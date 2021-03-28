@@ -26,8 +26,13 @@ const DEFAULT_VERB_FONT_SIZE = 50;
 const DEFAULT_SUBJECT_FONT_SIZE = 50;
 const DEFAULT_PREPOSITION_FONT_SIZE = 50;
 const DEFAULT_OBJECT_FONT_SIZE = 50;
+const DEFAULT_BACKGROUND_VARIATION = 1;
+const DEFAULT_HEADSHOT_VARIATION = 1;
+const DEFAULT_HEADSHOT_SCALE = 100;
 const MAX_FONT_SIZE = 200;
 const MIN_FONT_SIZE = 50;
+const MIN_HEADSHOT_SCALE = 25;
+const MAX_HEADSHOT_SCALE = 200;
 
 const DEFAULT_STAGE_DIMENSIONS = IMAGE_OPTIONS[FIRST_ITEM]
 
@@ -50,9 +55,28 @@ const TEXT_POSITIONS = {
   }
 }
 
-const BackgroundImage = ({ variation = 1}) => {
+const BackgroundImage = ({ variation = 1 }) => {
   const [image] = useImage(`/assets/bg-${variation}.png`);
   return <Image image={image} />;
+}
+
+const HeadshotImage = ({ variation = 1, x, y, scale }) => {
+  const [image] = useImage(`/assets/headshot-${variation}.png`);
+  if (image) {
+    return <Group
+      clipFunc={ctx => {
+        ctx.arc(image.width / 2, (image.height / 2) - 50, 200, 0, Math.PI * 2, false);
+      }}
+      x={x}
+      y={y}
+      scaleX={scale / 100}
+      scaleY={scale / 100}
+      draggable
+    >
+      <Image image={image} />
+    </Group>
+  }
+  return <Text text={'loading headshot...'}/>
 }
 
 const LogoImage = ({ stageWidth }) => {
@@ -95,6 +119,10 @@ const ImageBuilder = () => {
   const [stageDimensions, setStageDimensions] = useState(DEFAULT_STAGE_DIMENSIONS);
   const [actionImageDataUrl, setActionImageDataUrl] = useState(null);
 
+  const [backgroundVariation, setBgVariation] = useState(DEFAULT_BACKGROUND_VARIATION);
+  const [headshotVariation, setHeadshotVariation] = useState(DEFAULT_HEADSHOT_VARIATION);
+  const [headshotScale, setHeadshotScale] = useState(DEFAULT_HEADSHOT_SCALE);
+
   const stage = useRef();
 
   const downloadURI = (uri, name) => {
@@ -136,6 +164,10 @@ const ImageBuilder = () => {
 
   const handleChangeObjectFontSize = event => {
     setObjectFontSize(Number(event.target.value));
+  }
+
+  const handleChangeHeadshotScale = event => {
+    setHeadshotScale(Number(event.target.value));
   }
 
   const handleClickDownloadImage = () => {
@@ -181,67 +213,89 @@ const ImageBuilder = () => {
                   }
                 </Form.Control>
               </Form.Group>
+              <Row>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Enter Verb</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="ie. How to make ... , Making ... , Creating ... , Playing ... , etc."
+                      value={verbText}
+                      onChange={handleChangeVerbText}
+                    />
+                    <RangeSlider
+                      min={MIN_FONT_SIZE}
+                      max={MAX_FONT_SIZE}
+                      value={verbFontSize}
+                      onChange={handleChangeVerbFontSize}
+                      tooltipPlacement='bottom'
+                    />
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Enter Subject</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="ie. Melodies ... , Drum Patterns ... , VR Games ... , etc."
+                      value={subjectText}
+                      onChange={handleChangeSubjectText}
+                    />
+                    <RangeSlider
+                      min={MIN_FONT_SIZE}
+                      max={MAX_FONT_SIZE}
+                      value={subjectFontSize}
+                      onChange={handleChangeSubjectFontSize}
+                      tooltipPlacement='bottom'
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Enter Preposition</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="ie. in ... , with ... , inside of ... , etc."
+                      value={prepositionText}
+                      onChange={handleChangePrepositionText}
+                    />
+                    <RangeSlider
+                      min={MIN_FONT_SIZE}
+                      max={MAX_FONT_SIZE}
+                      value={prepositionFontSize}
+                      onChange={handleChangePrepositionFontSize}
+                      tooltipPlacement='bottom'
+                    />
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Enter Object</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="ie. Cubase 11 ... , Oculus Quest 2 ... , Beat Making ... , etc."
+                      value={objectText}
+                      onChange={handleChangeObjectText}
+                    />
+                    <RangeSlider
+                      min={MIN_FONT_SIZE}
+                      max={MAX_FONT_SIZE}
+                      value={objectFontSize}
+                      onChange={handleChangeObjectFontSize}
+                      tooltipPlacement='bottom'
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
               <Form.Group>
-                <Form.Label>Enter Verb</Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="ie. How to make ... , Making ... , Creating ... , Playing ... , etc."
-                  value={verbText}
-                  onChange={handleChangeVerbText}
-                />
+                <Form.Label>Adjust Headshot</Form.Label>
                 <RangeSlider
-                  min={MIN_FONT_SIZE}
-                  max={MAX_FONT_SIZE}
-                  value={verbFontSize}
-                  onChange={handleChangeVerbFontSize}
-                  tooltipPlacement='bottom'
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Enter Subject</Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="ie. Melodies ... , Drum Patterns ... , VR Games ... , etc."
-                  value={subjectText}
-                  onChange={handleChangeSubjectText}
-                />
-                <RangeSlider
-                  min={MIN_FONT_SIZE}
-                  max={MAX_FONT_SIZE}
-                  value={subjectFontSize}
-                  onChange={handleChangeSubjectFontSize}
-                  tooltipPlacement='bottom'
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Enter Preposition</Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="ie. in ... , with ... , inside of ... , etc."
-                  value={prepositionText}
-                  onChange={handleChangePrepositionText}
-                />
-                <RangeSlider
-                  min={MIN_FONT_SIZE}
-                  max={MAX_FONT_SIZE}
-                  value={prepositionFontSize}
-                  onChange={handleChangePrepositionFontSize}
-                  tooltipPlacement='bottom'
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Enter Object</Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="ie. Cubase 11 ... , Oculus Quest 2 ... , Beat Making ... , etc."
-                  value={objectText}
-                  onChange={handleChangeObjectText}
-                />
-                <RangeSlider
-                  min={MIN_FONT_SIZE}
-                  max={MAX_FONT_SIZE}
-                  value={objectFontSize}
-                  onChange={handleChangeObjectFontSize}
+                  min={MIN_HEADSHOT_SCALE}
+                  max={MAX_HEADSHOT_SCALE}
+                  value={headshotScale}
+                  onChange={handleChangeHeadshotScale}
                   tooltipPlacement='bottom'
                 />
               </Form.Group>
@@ -258,7 +312,8 @@ const ImageBuilder = () => {
           <Col xs={12} sm={12} md={9} lg={9}>
             <Stage className="mt-4 mb-4 konva-container" width={stageDimensions.width} height={stageDimensions.height} ref={stage}>
               <Layer>
-                <BackgroundImage />
+                <BackgroundImage variation={backgroundVariation} />
+                <HeadshotImage variation={headshotVariation} scale={headshotScale} />
                 <LogoImage stageWidth={stageDimensions.width} />
                 <ActionImage dataUrl={actionImageDataUrl} />
                 <Text
