@@ -22,10 +22,6 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import { IMAGE_OPTIONS, IMAGE_OPTIONS_MAPPING } from '../../../constants.jsx'
 
 const FIRST_ITEM = 0;
-const DEFAULT_VERB_FONT_SIZE = 50;
-const DEFAULT_SUBJECT_FONT_SIZE = 50;
-const DEFAULT_PREPOSITION_FONT_SIZE = 50;
-const DEFAULT_OBJECT_FONT_SIZE = 50;
 const DEFAULT_BACKGROUND_VARIATION = 1;
 const DEFAULT_HEADSHOT_VARIATION = 1;
 const DEFAULT_HEADSHOT_SCALE = 100;
@@ -36,22 +32,44 @@ const MAX_HEADSHOT_SCALE = 200;
 
 const DEFAULT_STAGE_DIMENSIONS = IMAGE_OPTIONS[FIRST_ITEM]
 
-const TEXT_POSITIONS = {
+const INITIAL_TEXT_STATE = {
   verb: {
+    value: '',
     x: 10,
-    y: 10
+    y: 10,
+    size: 50
   },
   subject: {
+    value: '',
     x: 10,
-    y: 10 + 50
+    y: 10 + 50,
+    size: 50
   },
   preposition: {
+    value: '',
     x: 10,
-    y: 10 + 50 + 50
+    y: 10 + 50 + 50,
+    size: 50
   },
   object: {
+    value: '',
     x: 10,
-    y: 10 + 50 + 50 + 50
+    y: 10 + 50 + 50 + 50,
+    size: 50
+  }
+}
+
+const INITIAL_IMAGE_STATE = {
+  background: {
+    variation: 1
+  },
+  headshot: {
+    variation: 1,
+    scale: 100
+  },
+  action: {
+    scale: 100,
+    dataUrl: null
   }
 }
 
@@ -108,20 +126,9 @@ const ActionImage = ({ dataUrl }) => {
 }
 
 const ImageBuilder = () => {
-  const [verbText, setVerbText] = useState('');
-  const [verbFontSize, setVerbFontSize] = useState(DEFAULT_VERB_FONT_SIZE);
-  const [subjectText, setSubjectText] = useState('');
-  const [subjectFontSize, setSubjectFontSize] = useState(DEFAULT_SUBJECT_FONT_SIZE);
-  const [prepositionText, setPrepositionText] = useState('');
-  const [prepositionFontSize, setPrepositionFontSize] = useState(DEFAULT_PREPOSITION_FONT_SIZE);
-  const [objectText, setObjectText] = useState('');
-  const [objectFontSize, setObjectFontSize] = useState(DEFAULT_OBJECT_FONT_SIZE);
+  const [text, setText] = useState(INITIAL_TEXT_STATE);
+  const [image, setImage] = useState(INITIAL_IMAGE_STATE);
   const [stageDimensions, setStageDimensions] = useState(DEFAULT_STAGE_DIMENSIONS);
-  const [actionImageDataUrl, setActionImageDataUrl] = useState(null);
-
-  const [backgroundVariation, setBgVariation] = useState(DEFAULT_BACKGROUND_VARIATION);
-  const [headshotVariation, setHeadshotVariation] = useState(DEFAULT_HEADSHOT_VARIATION);
-  const [headshotScale, setHeadshotScale] = useState(DEFAULT_HEADSHOT_SCALE);
 
   const stage = useRef();
 
@@ -134,40 +141,24 @@ const ImageBuilder = () => {
     document.body.removeChild(link);
   };
 
-  const handleChangeVerbText = event => {
-    setVerbText(event.target.value);
+  const handleChangeText = ({ key, property, value }) => {
+    setText({
+      ...text,
+      [key]: {
+        ...text[key],
+        [property]: value
+      }
+    });
   }
 
-  const handleChangeVerbFontSize = event => {
-    setVerbFontSize(Number(event.target.value));
-  }
-
-  const handleChangeSubjectText = event => {
-    setSubjectText(event.target.value);
-  }
-
-  const handleChangeSubjectFontSize = event => {
-    setSubjectFontSize(Number(event.target.value));
-  }
-
-  const handleChangePrepositionText = event => {
-    setPrepositionText(event.target.value);
-  }
-
-  const handleChangePrepositionFontSize = event => {
-    setPrepositionFontSize(Number(event.target.value));
-  }
-
-  const handleChangeObjectText = event => {
-    setObjectText(event.target.value);
-  }
-
-  const handleChangeObjectFontSize = event => {
-    setObjectFontSize(Number(event.target.value));
-  }
-
-  const handleChangeHeadshotScale = event => {
-    setHeadshotScale(Number(event.target.value));
+  const handleChangeImage = ({ key, property, value }) => {
+    setImage({
+      ...image,
+      [key]: {
+        ...image[key],
+        [property]: value
+      }
+    });
   }
 
   const handleClickDownloadImage = () => {
@@ -186,7 +177,13 @@ const ImageBuilder = () => {
     const reader = new FileReader();
 
     reader.onload = loadEvent => {
-      setActionImageDataUrl(loadEvent.target.result)
+      setImage({
+        ...image,
+        action: {
+          ...image['action'],
+          dataUrl: loadEvent.target.result
+        }
+      });
     };
 
     reader.readAsDataURL(blob);
@@ -220,14 +217,14 @@ const ImageBuilder = () => {
                     <Form.Control
                       as="input"
                       placeholder="ie. How to make ... , Making ... , Creating ... , Playing ... , etc."
-                      value={verbText}
-                      onChange={handleChangeVerbText}
+                      value={text.verb.value}
+                      onChange={event => handleChangeText({ key: 'verb', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
-                      value={verbFontSize}
-                      onChange={handleChangeVerbFontSize}
+                      value={text.verb.size}
+                      onChange={event => handleChangeText({ key: 'verb', property: 'size', value: Number(event.target.value)})}
                       tooltipPlacement='bottom'
                     />
                   </Form.Group>
@@ -238,14 +235,14 @@ const ImageBuilder = () => {
                     <Form.Control
                       as="input"
                       placeholder="ie. Melodies ... , Drum Patterns ... , VR Games ... , etc."
-                      value={subjectText}
-                      onChange={handleChangeSubjectText}
+                      value={text.subject.value}
+                      onChange={event => handleChangeText({ key: 'subject', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
-                      value={subjectFontSize}
-                      onChange={handleChangeSubjectFontSize}
+                      value={text.subject.size}
+                      onChange={event => handleChangeText({ key: 'subject', property: 'size', value: Number(event.target.value)})}
                       tooltipPlacement='bottom'
                     />
                   </Form.Group>
@@ -258,14 +255,14 @@ const ImageBuilder = () => {
                     <Form.Control
                       as="input"
                       placeholder="ie. in ... , with ... , inside of ... , etc."
-                      value={prepositionText}
-                      onChange={handleChangePrepositionText}
+                      value={text.preposition.value}
+                      onChange={event => handleChangeText({ key: 'preposition', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
-                      value={prepositionFontSize}
-                      onChange={handleChangePrepositionFontSize}
+                      value={text.preposition.size}
+                      onChange={event => handleChangeText({ key: 'preposition', property: 'size', value: Number(event.target.value)})}
                       tooltipPlacement='bottom'
                     />
                   </Form.Group>
@@ -276,14 +273,14 @@ const ImageBuilder = () => {
                     <Form.Control
                       as="input"
                       placeholder="ie. Cubase 11 ... , Oculus Quest 2 ... , Beat Making ... , etc."
-                      value={objectText}
-                      onChange={handleChangeObjectText}
+                      value={text.object.value}
+                      onChange={event => handleChangeText({ key: 'object', property: 'value', value: event.target.value})}
                     />
                     <RangeSlider
                       min={MIN_FONT_SIZE}
                       max={MAX_FONT_SIZE}
-                      value={objectFontSize}
-                      onChange={handleChangeObjectFontSize}
+                      value={text.object.size}
+                      onChange={event => handleChangeText({ key: 'object', property: 'size', value: Number(event.target.value)})}
                       tooltipPlacement='bottom'
                     />
                   </Form.Group>
@@ -294,8 +291,8 @@ const ImageBuilder = () => {
                 <RangeSlider
                   min={MIN_HEADSHOT_SCALE}
                   max={MAX_HEADSHOT_SCALE}
-                  value={headshotScale}
-                  onChange={handleChangeHeadshotScale}
+                  value={image.headshot.scale}
+                  onChange={event => handleChangeImage({ key: 'headshot', property: 'scale', value: Number(event.target.value)})}
                   tooltipPlacement='bottom'
                 />
               </Form.Group>
@@ -312,42 +309,42 @@ const ImageBuilder = () => {
           <Col xs={12} sm={12} md={9} lg={9}>
             <Stage className="mt-4 mb-4 konva-container" width={stageDimensions.width} height={stageDimensions.height} ref={stage}>
               <Layer>
-                <BackgroundImage variation={backgroundVariation} />
-                <HeadshotImage variation={headshotVariation} scale={headshotScale} />
+                <BackgroundImage variation={image.background.variation} />
+                <HeadshotImage variation={image.headshot.variation} scale={image.headshot.scale} />
                 <LogoImage stageWidth={stageDimensions.width} />
-                <ActionImage dataUrl={actionImageDataUrl} />
+                <ActionImage dataUrl={image.action.dataUrl} />
                 <Text
-                  x={TEXT_POSITIONS.verb.x}
-                  y={TEXT_POSITIONS.verb.y}
-                  text={verbText}
-                  fontSize={verbFontSize}
+                  x={text.verb.x}
+                  y={text.verb.y}
+                  text={text.verb.value}
+                  fontSize={text.verb.size}
                   fontFamily={'Fira Code'}
                   fill={'white'}
                   draggable
                 />
                 <Text
-                  x={TEXT_POSITIONS.subject.x}
-                  y={TEXT_POSITIONS.subject.y}
-                  text={subjectText}
-                  fontSize={subjectFontSize}
+                  x={text.subject.x}
+                  y={text.subject.y}
+                  text={text.subject.value}
+                  fontSize={text.subject.size}
                   fontFamily={'Fira Code'}
                   fill={'white'}
                   draggable
                 />
                 <Text
-                  x={TEXT_POSITIONS.preposition.x}
-                  y={TEXT_POSITIONS.preposition.y}
-                  text={prepositionText}
-                  fontSize={prepositionFontSize}
+                  x={text.preposition.x}
+                  y={text.preposition.y}
+                  text={text.preposition.value}
+                  fontSize={text.preposition.size}
                   fontFamily={'Fira Code'}
                   fill={'white'}
                   draggable
                 />
                 <Text
-                  x={TEXT_POSITIONS.object.x}
-                  y={TEXT_POSITIONS.object.y}
-                  text={objectText}
-                  fontSize={objectFontSize}
+                  x={text.object.x}
+                  y={text.object.y}
+                  text={text.object.value}
+                  fontSize={text.object.size}
                   fontFamily={'Fira Code'}
                   fill={'white'}
                   draggable
