@@ -16,6 +16,7 @@ import SocialInfo from './components/pages/social-info/index.jsx';
 import { Container, Row, Col } from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import './main.css';
 
 const App = () => {
