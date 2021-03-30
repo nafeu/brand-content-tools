@@ -3,6 +3,10 @@
   justify-content: center;
 }
 
+.konvajs-content {
+  border: 4px solid #34495e;
+}
+
 .text-styler-color-item {
   width: 10px;
   height: 15px;

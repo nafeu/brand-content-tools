@@ -27,6 +27,8 @@ const MAX_FONT_SIZE = 200;
 const MIN_FONT_SIZE = 50;
 const MIN_IMAGE_SCALE = 25;
 const MAX_IMAGE_SCALE = 200;
+const MIN_BACKGROUND_SCALE = 5;
+const MAX_BACKGROUND_SCALE = 100;
 const MIN_IMAGE_OFFSET = -200;
 const MAX_IMAGE_OFFSET = 400;
 const MIN_IMAGE_CLIP = 25;
@@ -128,7 +130,8 @@ const INITIAL_TEXT_STATE = {
 
 const INITIAL_IMAGE_STATE = {
   background: {
-    imagePath: DEFAULT_BACKGROUND_IMAGE
+    imagePath: DEFAULT_BACKGROUND_IMAGE,
+    scale: 100
   },
   headshot: {
     imagePath: DEFAULT_HEADSHOT_IMAGE,
@@ -253,9 +256,9 @@ const TextStyler = ({ onClickColor, onClickFont, onClickFontStyle, onClickFontDe
   );
 }
 
-const BackgroundImage = ({ imagePath }) => {
+const BackgroundImage = ({ imagePath, scale }) => {
   const [image] = useImage(`/assets/${imagePath}`);
-  return <Image image={image} />;
+  return <Image image={image} scaleX={scale / 100} scaleY={scale / 100} />;
 }
 
 const HeadshotImage = ({ imagePath, scale, xOffset, yOffset, clip }) => {
@@ -644,6 +647,24 @@ const ImageBuilder = () => {
               </Form.Group>
 
               <Form.Group>
+                <Form.Label>Adjust Background</Form.Label>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="4" className="text-muted">
+                    Scale
+                  </Form.Label>
+                  <Col sm="8">
+                    <RangeSlider
+                      tooltip="off"
+                      min={MIN_BACKGROUND_SCALE}
+                      max={MAX_BACKGROUND_SCALE}
+                      value={image.background.scale}
+                      onChange={event => handleChangeImage({ key: 'background', property: 'scale', value: Number(event.target.value)})}
+                    />
+                  </Col>
+                </Form.Group>
+              </Form.Group>
+
+              <Form.Group>
                 <Form.Label>Adjust Action Image</Form.Label>
                 <Form.Group as={Row}>
                   <Form.Label column sm="4" className="text-muted">
@@ -686,7 +707,10 @@ const ImageBuilder = () => {
           <Col xs={12} sm={12} md={9} lg={9}>
             <Stage className="mt-4 mb-4 konva-container" width={stageDimensions.width} height={stageDimensions.height} ref={stage}>
               <Layer>
-                <BackgroundImage imagePath={image.background.imagePath} />
+                <BackgroundImage
+                  imagePath={image.background.imagePath}
+                  scale={image.background.scale}
+                />
                 <LogoImage stageWidth={stageDimensions.width} />
                 <ActionImage
                   scale={image.action.scale}
