@@ -394,6 +394,14 @@ const ImageBuilder = () => {
   return (
     <Row className="justify-content-center">
       <Col>
+        <Row>
+          <Col xs={{ span: 8, offset: 2 }}>
+            <Form.Group>
+              <Form.Label>Image Idea</Form.Label>
+              <Form.Control as="textarea" rows={3} placeholder="Enter image idea..." />
+            </Form.Group>
+          </Col>
+        </Row>
         <Row className="mt-2">
           <Col xs={12} sm={12} md={3} lg={3}>
             <Form>

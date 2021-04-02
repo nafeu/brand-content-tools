@@ -97,3 +97,9 @@
 .text-small {
   font-size: 0.75em;
 }
+
+.social-info-text {
+  white-space: pre-line;
+  padding: 1em;
+  background-color: ;
+}

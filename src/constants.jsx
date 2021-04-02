@@ -2,7 +2,7 @@ export const SOCIAL_INFO = [
   {
     key: 'youtube',
     label: 'YouTube',
-    text: 'Instagram: https://instagram.com/phrakture​\nTwitch: https://twitch.tv/phrakturemusic​\nSpotify: https://open.spotify.com/artist/4AlnXoFGT5zl3v85ScIOzK?si=22xhtuLNSROYPdpVvuUglQ\nBandcamp: https://phrakture.bandcamp.com'
+    text: '\nLike and subscribe for more!\n\n---\nStay Updated\nInstagram: https://instagram.com/phrakture​\nTwitch: https://twitch.tv/phrakturemusic\nTwitter: https://twitter.com/phrakturemusic​\n\nSupport My Work\nSpotify: https://open.spotify.com/artist/4AlnXoFGT5zl3v85ScIOzK?si=22xhtuLNSROYPdpVvuUglQ\nBandcamp: https://phrakture.bandcamp.com\n\nGet In Touch: nafeu.nasir@gmail.com \n'
   },
   {
     key: 'instagram',

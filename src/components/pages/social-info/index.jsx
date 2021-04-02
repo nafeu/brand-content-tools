@@ -29,7 +29,7 @@ const SocialInfo = () => {
             <Card key={key} style={{ width: '18rem' }}>
               <Card.Body>
                 <Card.Title>{label}</Card.Title>
-                <Card.Text>
+                <Card.Text className="social-info-text bg-light text-monospace">
                   {text}
                 </Card.Text>
                 <CopyToClipboard
