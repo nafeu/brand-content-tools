@@ -1,6 +1,15 @@
-export const SOCIAL_INFO_MAPPING = {
-  youtube: 'Instagram: https://instagram.com/phrakture​\nTwitch: https://twitch.tv/phrakturemusic​\nSpotify: https://open.spotify.com/artist/4AlnX...​\nBandcamp: https://phrakture.bandcamp.com'
-}
+export const SOCIAL_INFO = [
+  {
+    key: 'youtube',
+    label: 'YouTube',
+    text: 'Instagram: https://instagram.com/phrakture​\nTwitch: https://twitch.tv/phrakturemusic​\nSpotify: https://open.spotify.com/artist/4AlnXoFGT5zl3v85ScIOzK?si=22xhtuLNSROYPdpVvuUglQ\nBandcamp: https://phrakture.bandcamp.com'
+  },
+  {
+    key: 'instagram',
+    label: 'Instagram',
+    text: 'Link in bio!'
+  }
+]
 
 export const IMAGE_OPTIONS = [
   {
@@ -42,3 +51,5 @@ export const IMAGE_OPTIONS_MAPPING = IMAGE_OPTIONS.reduce(
   }),
   {}
 );
+
+export const ONE_SECOND = 1000;
