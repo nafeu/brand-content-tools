@@ -133,6 +133,7 @@ const IdeaGenerator = () => {
                         : 'outline-secondary'
                     }
                     onClick={() => handleSelectMediaTypeNounPhrase(mediaTypeNounPhrase)}
+                    className="text-small"
                     block
                   >
                     {mediaTypeNounPhrase}

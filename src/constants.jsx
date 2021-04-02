@@ -56,12 +56,13 @@ const AREAS = [
   'music',
   'dev',
   'performance',
-  'gaming'
+  'gaming',
+  'design'
 ];
 
 const MEDIA_TYPE_NOUN_PHRASE = [
-  'A photo',
   'A video',
+  'A photo',
   'A streaming session',
   'A presentation',
   'A blog post'
@@ -101,6 +102,10 @@ const VERB_SUBJECT_PHRASE = {
     'playing VR',
     'playing a competitive shooter'
   ],
+  'design': [
+    'audio visualizer',
+    'making background art'
+  ]
 };
 
 const PREPOSITION_OBJECT_PHRASE = {
@@ -129,6 +134,11 @@ const PREPOSITION_OBJECT_PHRASE = {
     'on the PC',
     'with the Quest 2',
     'with the Rift S'
+  ],
+  'design': [
+    'for my own music (30s instagram)',
+    'for my own music youtube (5 minutes)',
+    'for an artist whose music I like'
   ]
 };
 
