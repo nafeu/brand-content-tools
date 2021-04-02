@@ -93,3 +93,7 @@
 .image-selector-headshot-item:active {
   opacity: 0.25;
 }
+
+.text-small {
+  font-size: 0.75em;
+}

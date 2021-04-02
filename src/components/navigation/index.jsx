@@ -8,6 +8,9 @@ const Navigation = () => (
       brand-content-tools
     </Navbar.Brand>
     <Nav className="mr-auto">
+      <Nav.Link as={Link} to="/idea-generator">
+        Idea Generator
+      </Nav.Link>
       <Nav.Link as={Link} to="/image-builder">
         Image Builder
       </Nav.Link>

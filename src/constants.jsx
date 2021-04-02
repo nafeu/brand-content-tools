@@ -52,4 +52,92 @@ export const IMAGE_OPTIONS_MAPPING = IMAGE_OPTIONS.reduce(
   {}
 );
 
+const AREAS = [
+  'music',
+  'dev',
+  'performance',
+  'gaming'
+];
+
+const MEDIA_TYPE_NOUN_PHRASE = [
+  'A photo',
+  'A video',
+  'A streaming session',
+  'A presentation',
+  'A blog post'
+];
+
+const VERB_SUBJECT_PHRASE = {
+  'dev': [
+    'scaffolding front-ends',
+    'automating invoices',
+    'automating image generation',
+    'automating blogs'
+  ],
+  'music': [
+    'making melodies',
+    'making atmospheres',
+    'making drum patterns',
+    'making progressive breaks',
+    'making drum & bass',
+    'making progressive house',
+    'making drone music',
+    'making study music',
+    'making interesting samples',
+    'making bass tones',
+    'making FX',
+    'using a vocoder',
+    'creating glitch effects',
+    'using sidechain',
+    'exploring tooling',
+    'a setup tutorial'
+  ],
+  'performance': [
+    'live looping',
+    'finger drumming with the MPKmini',
+    'finger drumming with the MPD20'
+  ],
+  'gaming': [
+    'playing VR',
+    'playing a competitive shooter'
+  ],
+};
+
+const PREPOSITION_OBJECT_PHRASE = {
+  'dev': [
+    'with react',
+    'with nodejs',
+    'with some JavaScript library',
+    'with deno'
+  ],
+  'music': [
+    'with a free VST in Cubase',
+    'with a single sample in Cubase',
+    'with a single instrument in Cubase',
+    'with limited VSTs in Cubase',
+    'with a specific VST in Cubase',
+    'with Cubase',
+    'with the Volca and Cubase',
+    'with the electric guitar and Cubase',
+    'chopping samples'
+  ],
+  'performance': [
+    'with ableton',
+    'with cubase'
+  ],
+  'gaming': [
+    'on the PC',
+    'with the Quest 2',
+    'with the Rift S'
+  ]
+};
+
+export const IDEA_GENERATOR_MAPPINGS = {
+  AREAS,
+  MEDIA_TYPE_NOUN_PHRASE,
+  VERB_SUBJECT_PHRASE,
+  PREPOSITION_OBJECT_PHRASE
+}
+
 export const ONE_SECOND = 1000;
+export const FIRST_ITEM = 0;

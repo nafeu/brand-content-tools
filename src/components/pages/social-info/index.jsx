@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { CardDeck, Card, Button, Row, Col } from 'react-bootstrap';
+import { CardGroup, Card, Button, Row, Col } from 'react-bootstrap';
 
 import { SOCIAL_INFO, ONE_SECOND } from '../../../constants.jsx';
-
-import './index.css';
 
 const initialCopyState = SOCIAL_INFO.reduce((acc, current) => {
   return {
@@ -26,9 +24,9 @@ const SocialInfo = () => {
   return (
     <Row>
       <Col xs={12} sm={12} md={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }}>
-        <CardDeck>
+        <CardGroup>
           {SOCIAL_INFO.map(({ key, label, text }) => (
-            <Card style={{ width: '18rem' }}>
+            <Card key={key} style={{ width: '18rem' }}>
               <Card.Body>
                 <Card.Title>{label}</Card.Title>
                 <Card.Text>
@@ -44,7 +42,7 @@ const SocialInfo = () => {
               </Card.Body>
             </Card>
           ))}
-          </CardDeck>
+          </CardGroup>
       </Col>
     </Row>
   )

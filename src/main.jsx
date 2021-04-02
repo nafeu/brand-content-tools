@@ -12,6 +12,7 @@ import Home from './components/pages/home/index.jsx';
 import About from './components/pages/about/index.jsx';
 import ImageBuilder from './components/pages/image-builder/index.jsx';
 import SocialInfo from './components/pages/social-info/index.jsx';
+import IdeaGenerator from './components/pages/idea-generator/index.jsx';
 
 import { Container, Row, Col } from 'react-bootstrap';
 
@@ -32,6 +33,9 @@ const App = () => {
           <Row className="mt-2">
             <Col>
               <Switch>
+                <Route path="/idea-generator">
+                  <IdeaGenerator />
+                </Route>
                 <Route path="/social-info">
                   <SocialInfo />
                 </Route>
