@@ -11,7 +11,7 @@ const Home = () => (
           "Brand content tools" is set of tools to help a youtube, twitch or instagram content creator automate the monotonous.
         </p>
         <p>
-          <Button as={Link} to={"/image-builder"} variant="primary">Get Started</Button>
+          <Button as={Link} to={"/idea-generator"} variant="primary">Get Started</Button>
         </p>
       </Jumbotron>
     </Col>

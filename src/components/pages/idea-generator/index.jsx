@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { sample } from 'lodash';
 import { Card, Button, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import { ONE_SECOND, FIRST_ITEM, IDEA_GENERATOR_MAPPINGS } from '../../../constants.jsx';
 
@@ -34,7 +35,7 @@ const IdeaGenerator = () => {
     selectedPrepositionObjectPhrase
   } = state;
 
-  const handleCopy = key => {
+  const handleClickCopyToClipboard = () => {
     setCopyState(true);
     setTimeout(() => {
       setCopyState(false);
@@ -87,7 +88,14 @@ const IdeaGenerator = () => {
                 <Card.Text>
                   <h3>{ideaText}</h3>
                 </Card.Text>
-                <Button onClick={handleClickRandomize} variant="danger">Randomize</Button>
+                <Button onClick={handleClickRandomize} className="mr-1" variant="danger">Randomize</Button>
+                <CopyToClipboard
+                  text={ideaText}
+                  onCopy={handleClickCopyToClipboard}
+                >
+                  <Button className="mr-1" variant="primary">{copyState ? 'Copied' : 'Copy To Clipboard'}</Button>
+                </CopyToClipboard>
+                <Button as={Link} to={"/image-builder"} variant="outline-success">Create Thumbnail</Button>
               </Card.Body>
             </Card>
           </Col>
