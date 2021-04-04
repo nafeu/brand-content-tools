@@ -62,8 +62,12 @@ const AVAILABLE_COLORS = [
 ];
 
 const AVAILABLE_FONTS = [
-  'Fira Code',
-  'FiraCode-Light'
+  'Roboto Mono',
+  'RobotoMono-Thin',
+  'RobotoMono-Light',
+  'RobotoMono-Medium',
+  'RobotoMono-Regular',
+  'RobotoMono-Bold'
 ];
 
 const AVAILABLE_FONT_STYLES = [
