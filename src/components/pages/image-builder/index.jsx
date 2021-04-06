@@ -37,8 +37,17 @@ const MIN_IMAGE_BORDER_RADIUS = 0;
 const MAX_IMAGE_BORDER_RADIUS = 100;
 
 const AVAILABLE_BACKGROUND_IMAGES = [
-  'bg-dark-blue-gradient.png',
-  'bg-peach-red-gradient.png'
+  'bg-gradient-1.png',
+  'bg-gradient-2.png',
+  'bg-gradient-3.png',
+  'bg-gradient-4.png',
+  'bg-gradient-5.png',
+  'bg-gradient-6.png',
+  'bg-gradient-7.png',
+  'bg-gradient-8.png',
+  'bg-gradient-9.png',
+  'bg-gradient-10.png',
+  'bg-gradient-11.png',
 ];
 
 const AVAILABLE_HEADSHOT_IMAGES = [
